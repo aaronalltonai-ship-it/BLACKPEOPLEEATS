@@ -1,0 +1,5 @@
+{
+  "name": "BlackPeopleEats",
+  "description": "A social community platform to discover and share the best Black-owned and Black-frequented restaurants across the globe.",
+  "requestFramePermissions": ["geolocation"]
+}
