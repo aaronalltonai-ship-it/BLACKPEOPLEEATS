@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { cn } from './lib/utils';
 import { getCityHighlights, type Restaurant, type Post } from './services/geminiService';
 import Markdown from 'react-markdown';
+import Blog from './components/Blog';
 
 export default function App() {
   const [city, setCity] = useState('Atlanta');
@@ -15,6 +16,7 @@ export default function App() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
+  const [view, setView] = useState<'home' | 'blog'>('home');
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   useEffect(() => {
@@ -108,7 +110,8 @@ export default function App() {
           </div>
 
           <div className="hidden md:flex items-center gap-8 text-sm font-medium uppercase tracking-widest">
-            <a href="#" onClick={(e) => e.preventDefault()} className="hover:text-brand-orange transition-colors">Explore</a>
+            <button onClick={() => setView('home')} className={cn("hover:text-brand-orange transition-colors", view === 'home' && "text-brand-orange")}>Explore</button>
+            <button onClick={() => setView('blog')} className={cn("hover:text-brand-orange transition-colors", view === 'blog' && "text-brand-orange")}>Blog</button>
             <a href="#" onClick={(e) => e.preventDefault()} className="hover:text-brand-orange transition-colors">Cities</a>
             <a href="#" onClick={(e) => e.preventDefault()} className="hover:text-brand-orange transition-colors">Community</a>
           </div>
@@ -139,8 +142,10 @@ export default function App() {
       </header>
 
       <main className="flex-1 max-w-7xl mx-auto w-full p-6 space-y-12">
-        {/* Hero Section */}
-        <section className="relative h-[60vh] rounded-3xl overflow-hidden shadow-2xl group">
+        {view === 'home' ? (
+          <>
+            {/* Hero Section */}
+            <section className="relative h-[60vh] rounded-3xl overflow-hidden shadow-2xl group">
           <img 
             src={`https://images.unsplash.com/photo-1414235077428-338988a2e8c0?q=80&w=1920&h=1080&fit=crop`} 
             className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
@@ -352,7 +357,11 @@ export default function App() {
             </section>
           </div>
         </div>
-      </main>
+      </>
+    ) : (
+      <Blog />
+    )}
+  </main>
 
       <footer className="bg-brand-ink text-white py-12 px-6 mt-24">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12">
@@ -506,34 +515,6 @@ export default function App() {
                   <div className="space-y-1">
                     <label className="text-[10px] font-bold uppercase tracking-widest text-brand-ink/40">Your Review</label>
                     <textarea name="review" rows={3} required placeholder="Tell the community about it..." className="w-full bg-white border border-brand-ink/10 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-orange/20 resize-none" />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-[10px] font-bold uppercase tracking-widest text-brand-ink/40">Photo</label>
-                    <div className="relative w-full h-32 bg-brand-ink/5 border-2 border-dashed border-brand-ink/20 rounded-xl flex flex-col items-center justify-center overflow-hidden hover:bg-brand-ink/10 transition-colors cursor-pointer">
-                      {selectedImage ? (
-                        <img src={selectedImage} className="absolute inset-0 w-full h-full object-cover" alt="Preview" />
-                      ) : (
-                        <>
-                          <Camera className="text-brand-ink/40 mb-2" size={24} />
-                          <span className="text-xs text-brand-ink/60 font-bold uppercase tracking-widest">Upload Photo</span>
-                        </>
-                      )}
-                      <input 
-                        type="file" 
-                        accept="image/*"
-                        className="absolute inset-0 opacity-0 cursor-pointer"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          if (file) {
-                            const reader = new FileReader();
-                            reader.onloadend = () => {
-                              setSelectedImage(reader.result as string);
-                            };
-                            reader.readAsDataURL(file);
-                          }
-                        }}
-                      />
-                    </div>
                   </div>
                   <div className="pt-4">
                     <button type="submit" className="w-full bg-brand-orange text-white font-bold uppercase tracking-widest py-4 rounded-xl shadow-lg hover:bg-brand-ink transition-all">
